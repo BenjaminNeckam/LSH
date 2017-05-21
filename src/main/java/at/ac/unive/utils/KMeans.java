@@ -2,9 +2,28 @@ package at.ac.unive.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class KMeans {
 	
+	public static void hashPoints(ArrayList<Point> points){
+		Point v = generateHashVector();
+		//Aktuelle Bucketsize
+		int w = 1;
+		ArrayList<Bucket> buckets = new ArrayList<>();
+		//First hash
+		for(Point point: points){
+			hash(point, v);
+		}
+		
+	}
+	
+	/**
+	 * Function to compare results from Martin Perdacher
+	 * @param one
+	 * @param two
+	 * @return
+	 */
 	public static double NMI(ArrayList<Integer> one, ArrayList<Integer> two){
 		if(one.size()!=two.size()){
 			throw new IllegalArgumentException("Sizes don't match!");
@@ -67,6 +86,33 @@ public class KMeans {
 
 		System.out.println("NMI: "+reto);
 		return reto;
+	}
+	
+	/**
+	 * Normaldistributed vector for hashfunction
+	 * @return
+	 */
+	public static Point generateHashVector(){
+		Point v;
+		ArrayList<Float> coordinates = new ArrayList<>();
+		Random random = new Random();
+		float temp;
+		//10 weil Dim 10 im Moment
+		for(int i=0; i<10;i++) {
+			temp = (float) (0+random.nextGaussian());
+			coordinates.add(temp);
+		}
+		v = new Point(coordinates);
+		return v;
+	}
+	
+	public static void hash(Point point, Point hashVector){
+		float sum = 0;
+		int size = point.getCoordinates().size();
+		for(int i=0; i<size; i++){
+			sum += point.getCoordinates().get(i)*hashVector.getCoordinates().get(i);
+		}
+		point.setHashValue(sum);
 	}
 
 }

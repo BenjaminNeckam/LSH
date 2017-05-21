@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 public class CSVParser {
 	
+	/**
+	 * Parses CSV-File in ArrayList of Points
+	 * @param file
+	 * @return
+	 */
 	public static ArrayList<Point> CSVToPoint(String file){
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<Float> coordinates;

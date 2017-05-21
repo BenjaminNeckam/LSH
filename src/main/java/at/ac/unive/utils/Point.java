@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class Point {
 	ArrayList<Float> coordinates;
 	int clusterNumb;
-
+	float hashValue;
+	
 	public Point() {}
 	
 	public Point(ArrayList<Float> coordinates){
@@ -58,6 +59,16 @@ public class Point {
 		}
 	}
 	
+	
+	
+	public float getHashValue() {
+		return hashValue;
+	}
+
+	public void setHashValue(float hashValue) {
+		this.hashValue = hashValue;
+	}
+
 	@Override
 	public String toString() {
 		String coord = "Cluster: " + getClusterNumb() + " -> [ ";
