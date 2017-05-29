@@ -1,21 +1,83 @@
 package at.ac.unive.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class KMeans {
 	
-	public static void hashPoints(ArrayList<Point> points){
+	public static void hashPoints(ArrayList<Point> points) throws Exception{
+		long startTime = System.nanoTime();
 		Point v = generateHashVector();
-		//Aktuelle Bucketsize
-		int w = 1;
-		ArrayList<Bucket> buckets = new ArrayList<>();
-		//First hash
+		//Current Bucketsize 
+		float w;
+		TreeMap<Object, Bucket> buckets = new TreeMap<>();
+		float min = Float.MAX_VALUE;
+		float max = Float.MIN_VALUE;
+		//First hash and computing Bucketsize
+
 		for(Point point: points){
 			hash(point, v);
+			if(point.getHashValue() >= max){
+				max = point.getHashValue();
+			}
+			if(point.getHashValue() <= min){
+				min = point.getHashValue();
+			}
+		}
+		//Set intervalls of buckets
+		//TODO Optimize?
+		w = (float)((Math.abs(max-min))/(Math.sqrt(points.size()/Math.log(points.size()))));
+		System.out.println("MIN: " + min);
+		System.out.println("MAX: " + max);
+		int bucketNumbs = (int) Math.ceil((Math.sqrt(points.size()/Math.log(points.size()))));
+		System.out.println("Bucketnumbers: " + bucketNumbs);
+		float intervall = min;
+		for(int i=0;i<bucketNumbs;i++){
+			buckets.put(Float.hashCode(intervall),new Bucket(new float[]{intervall,(float) (intervall+(w-0.0001))}));
+			intervall+=w;
 		}
 		
+		//Set points to buckets
+		float hashValue = 0;
+		
+		for(Point point:points){
+			hashValue = point.getHashValue();
+			if(hashValue < min || hashValue > max){
+				throw new Exception("Hashcode is not in range");
+			}else{
+//				buckets.get(hashCode).addPoint(point);
+				if(Float.hashCode(hashValue)>0){
+					buckets.floorEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+				}else{
+					buckets.ceilingEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+				}
+				
+			}
+		}
+		
+		//Swap Key Value Pairs to get k-Buckets with most elements in it (Our case 15)
+		TreeMap<Integer,Object> rev = new TreeMap<>();
+	    for(Map.Entry<Object,Bucket> entry : buckets.entrySet()){
+	    	rev.put(entry.getValue().getPoints().size(), entry.getKey());
+	    }
+	    NavigableSet<Integer> orderedValues = rev.descendingKeySet();
+	    double estimatedTime = (System.nanoTime() - startTime)/ 1000000000.0;
+		System.out.println("\nElapsed Time: " + estimatedTime + " seconds");
+		
+	    for(int i=0;i<15;i++){
+	    	//TODO Get 15 biggest buckets, calculate Centroid of it
+	    }
+	
 	}
 	
 	/**
@@ -114,5 +176,6 @@ public class KMeans {
 		}
 		point.setHashValue(sum);
 	}
+	
 
 }
