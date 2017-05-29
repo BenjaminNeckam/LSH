@@ -12,7 +12,7 @@ public class Bucket {
 	
 	public void addPoint(Point point){
 		if(this.points==null){
-			this.points = new ArrayList<>();
+			this.points = new ArrayList<Point>();
 			this.points.add(point);
 		}else{
 			this.points.add(point);
@@ -34,7 +34,6 @@ public class Bucket {
 	public void setBucketInterval(float[] bucketInterval) {
 		this.bucketInterval = bucketInterval;
 	}
-	
 	
 
 }

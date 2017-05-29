@@ -37,7 +37,7 @@ public class Point {
 
 	public void addNewCoordinate(float value){
 		if(this.coordinates==null){
-			this.coordinates = new ArrayList<>();
+			this.coordinates = new ArrayList<Float>();
 			this.coordinates.add(value);
 		}else{
 			this.coordinates.add(value);
@@ -51,7 +51,7 @@ public class Point {
 	 */
 	public void overwriteCoordinate(int index,float value){
 		if(this.coordinates==null){
-			this.coordinates = new ArrayList<>();
+			this.coordinates = new ArrayList<Float>();
 			this.coordinates.add(value);
 		}else{
 			this.coordinates.remove(index);
