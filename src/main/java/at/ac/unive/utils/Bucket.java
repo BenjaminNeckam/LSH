@@ -20,6 +20,9 @@ public class Bucket {
 	}
 
 	public ArrayList<Point> getPoints() {
+		if(this.points==null){
+			this.points = new ArrayList<>();
+		}
 		return points;
 	}
 
@@ -35,5 +38,15 @@ public class Bucket {
 		this.bucketInterval = bucketInterval;
 	}
 	
+
+	@Override
+	public String toString(){
+		if(points==null){
+			this.points = new ArrayList<>();
+		}
+		String string = "Intervall: [" + getBucketInterval()[0] + ";" + getBucketInterval()[1]  + "]" 
+				+ "\nNumber Elements: " + getPoints().size();
+		return string;
+	}
 
 }

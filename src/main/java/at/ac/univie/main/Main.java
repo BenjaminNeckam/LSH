@@ -1,6 +1,9 @@
 package at.ac.univie.main;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -17,6 +20,7 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args){
+
 		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/sipic/Desktop/SDM_csv/LSH-nmi-corrected.csv");
 		
 		KMeans k = new KMeans();
@@ -35,6 +39,34 @@ public class Main {
 
 	
 		
+
+
+		
+		
+		
+//		ArrayList<Float> point = new ArrayList<>();
+//		Random random = new Random();
+//		for(int i=0;i<50;i++){
+//			point.add((-100 + (0+100)*random.nextFloat()));
+//		}
+//		Collections.sort(point, new Comparator<Float>() {
+//            public int compare(Float o1, Float o2) {
+//            	if (o1 > o2) {
+//                    return -1;
+//                  }
+//                  if (o1 < o2) {
+//                    return 1;
+//                  }
+//                  return 0;
+//            }
+//        });
+//		
+//		for(Float value:point){
+//			System.out.println(value);
+//		}
+//		for(Float value:point){
+//			System.out.println(Float.hashCode(value));
+//		}
 
 	}
 }
