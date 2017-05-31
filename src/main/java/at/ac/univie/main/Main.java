@@ -16,9 +16,11 @@ import at.ac.unive.utils.KMeans;
 import at.ac.unive.utils.Plot;
 import at.ac.unive.utils.Point;
 
+
 public class Main {
 
 	public static void main(String[] args){
+<<<<<<< HEAD
 		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
 		try {
 			KMeans.lsh(points);
@@ -37,11 +39,38 @@ public class Main {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+=======
+
+		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/sipic/Desktop/SDM_csv/LSH-nmi-corrected.csv");
+		
+		KMeans k = new KMeans();
+		
+		ArrayList a = k.initCentroids(points,6);
+		
+		for(int i=0;i<a.size();++i){
+			System.out.println(a.get(i));
+>>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 		}
 
 
 		
+<<<<<<< HEAD
 
+=======
+		
+		Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
+		scatterplotdemo4.pack();
+		RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
+		scatterplotdemo4.setVisible(true);
+
+	
+		
+
+
+		
+		
+		
+>>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 //		ArrayList<Float> point = new ArrayList<>();
 //		Random random = new Random();
 //		for(int i=0;i<50;i++){
@@ -65,5 +94,6 @@ public class Main {
 //		for(Float value:point){
 //			System.out.println(Float.hashCode(value));
 //		}
+
 	}
 }

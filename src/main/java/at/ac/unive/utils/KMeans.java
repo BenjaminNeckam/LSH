@@ -15,6 +15,8 @@ import java.util.TreeMap;
 
 
 
+
+
 public class KMeans {
 
 	public static void lsh(ArrayList<Point> points) throws Exception{
@@ -169,6 +171,72 @@ public class KMeans {
         return indexOfCentroid;
 	}
 	
+<<<<<<< HEAD
+=======
+	public ArrayList<Point> initCentroids(ArrayList<Point> points,int numOfCtr){
+		ArrayList<Point> pointArray = new ArrayList(points);
+		ArrayList<Point> centroids = new ArrayList();
+		Random r = new Random();
+		
+		Point firstCentroid = pointArray.get(r.nextInt(pointArray.size()));
+		centroids.add(firstCentroid);
+		pointArray.remove(firstCentroid);
+		
+		
+		double[] d2 = new double[pointArray.size()];
+		
+		while(centroids.size()<numOfCtr){
+			double sum = 0;
+			for(int i=0;i<centroids.size();++i){
+				Point p = pointArray.get(i);
+				int index = nearestCentroid(centroids, p);
+				double d = dist(p, centroids.get(index));
+				sum+=d*d;
+				d2[i]=sum;
+			}
+			
+			double d = r.nextDouble() * sum;
+			for(int i=0;i<d2.length;++i){
+				if(d2[i]>=d){
+					Point p = pointArray.get(i);
+					centroids.add(p);
+					pointArray.remove(p);
+					break;
+				}
+			}
+		}
+		
+		return centroids;
+		
+	}
+	
+	public int nearestCentroid(ArrayList<Point> centroids,Point p){
+		double minDistance = Double.MAX_VALUE;
+        int indexOfCentroid = 0;
+        
+        for (int i=0;i<centroids.size();++i){
+        	float distance = dist(p, centroids.get(i));
+        	if (distance < minDistance) {
+                minDistance = distance;
+                indexOfCentroid = i;
+            }
+        }
+        
+        return indexOfCentroid;
+	}
+	
+	
+	public static float dist(Point point1, Point point2){
+		float sum=0;
+		for(int i=0;i<point1.getCoordinates().size();i++){
+			sum+=Math.pow(point1.getCoordinates().get(i)-point2.getCoordinates().get(i), 2);
+		}
+		float norm=(float)Math.sqrt(sum);
+		return norm;
+
+	    }
+	
+>>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 	
 	/**
 	 * Function to compare results from Martin Perdacher

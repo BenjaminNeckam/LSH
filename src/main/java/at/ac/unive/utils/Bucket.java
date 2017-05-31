@@ -40,7 +40,11 @@ public class Bucket {
 	public void setBucketInterval(float[] bucketInterval) {
 		this.bucketInterval = bucketInterval;
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 
 	@Override
 	public String toString(){
