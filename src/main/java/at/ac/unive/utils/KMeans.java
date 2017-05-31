@@ -13,71 +13,30 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
-
-
-
-
 public class KMeans {
 
-	public static void lsh(ArrayList<Point> points) throws Exception{
+	public static void lsh(ArrayList<Point> points,Float bucketSize) throws Exception{
 		long startTime = System.nanoTime();
+		long startTimeV = System.nanoTime();
 		Point v = generateHashVector();
-		//Current Bucketsize
-		float w;
-		TreeMap<Object, Bucket> buckets = new TreeMap<>();
-		float min = Float.MAX_VALUE;
-		float max = Float.MIN_VALUE;
-		//First hash and computing Bucketsize
-
-
-		for(Point point: points){
-			hash(point, v);
-			if(point.getHashValue() >= max){
-				max = point.getHashValue();
-			}
-			if(point.getHashValue() <= min){
-				min = point.getHashValue();
-			}
-		}
-
-		//Set intervals of buckets
-		//TODO Optimize?
-		w = (float)(Math.abs(max-min)/(Math.sqrt(points.size())/Math.log(points.size())));
-		System.out.println("Bucketsize: " + w);
-		System.out.println("MIN: " + min);
-		System.out.println("MAX: " + max);
-		int bucketNumbs = (int) Math.ceil(Math.sqrt(points.size())/Math.log(points.size()));
-		System.out.println("Bucketnumbers: " + bucketNumbs);
-		float interval = min;
-		for(int i=0;i<bucketNumbs;i++){
-			buckets.put(Float.hashCode(interval),new Bucket(new float[]{interval,(float) (interval+(w-0.0001))},Float.hashCode(interval)));
-//			System.out.println("IntevalHash: " + Float.hashCode(intervall));
-			interval+=w;
-		}
-
-		//Set points to buckets
-		float hashValue = 0;
-
-		for(Point point:points){
-			hashValue = point.getHashValue();
-			if(hashValue < min || hashValue > max){
-				throw new Exception("Hashcode is not in range");
-			}else{
-//				buckets.get(hashCode).addPoint(point);
-				if(Float.hashCode(hashValue)>0){
-					buckets.floorEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
-				}else{
-					buckets.ceilingEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
-				}
-
-			}
-		}
-
+		double estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
+		System.out.println("\nElapsed Time Generating HashVector: " + estimatedTimeV + " seconds");
+		
+		long startTimeB = System.nanoTime();
+		//TODO more than one hash
+		TreeMap<Object,Bucket> buckets = initBucketsAndHashPoints(points, v, bucketSize);
+		double estimatedTimeB = (System.nanoTime() - startTimeB)/ 1000000000.0;
+		System.out.println("\nElapsed Time Init Buckets and Hash Points: " + estimatedTimeB + " seconds");
+		
+		long startTimeS = System.nanoTime();
 		//Returns a sorted HashMap by Values (size of pointslist)
 		HashMap<Object,Bucket> sortedBuckets = sortByValues(buckets);
 		Set<Object> sortedKeySet= sortedBuckets.keySet();
 		Object[] keys = sortedKeySet.toArray();
+		double estimatedTimeS = (System.nanoTime() - startTimeS)/ 1000000000.0;
+		System.out.println("\nElapsed Time Sorting: " + estimatedTimeS + " seconds");
 
+		long startTimeC = System.nanoTime();
 		//Init Centroids (calcultateCentroidOfBucket just for first centroid calculation)
 		ArrayList<Centroid> centroid = new ArrayList<>();
 		Centroid tmpCentroid;
@@ -92,151 +51,174 @@ public class KMeans {
 			tmpCentroid=null;
 	    }
 
-		System.out.println("Centroids before update: ");
-		for(Centroid c:centroid) {
-			System.out.println(c.toString());
-			System.out.println(c.getBuckets().size());
-		}
+//		System.out.println("Centroids before update: ");
+//		for(Centroid c:centroid) {
+//			System.out.println(c.toString());
+//			System.out.println(c.getBuckets().size());
+//		}
 
 		//Calculate remaining buckets
 		for(int i=15;i<keys.length;i++) {
 			if(buckets.get(keys[i]).getPoints() != null || buckets.get(keys[i]).getPoints().size() > 0) {
-				computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
+				if(buckets.get(keys[i]).getPoints().size()!=0){
+					computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
+				}
+				
 			}
 		}
 
 
 
-		System.out.println("Centroids after update: ");
+//		System.out.println("Centroids after update: ");
 		for(Centroid c:centroid) {
 			c.updateCentroid();
-			System.out.println(c.toString());
-			System.out.println(c.getBuckets().size());
+//			System.out.println(c.toString());
+//			System.out.println(c.getBuckets().size());
 		}
+		double estimatedTimeC = (System.nanoTime() - startTimeC)/ 1000000000.0;
+		System.out.println("\nElapsed Time Init Centroids: " + estimatedTimeC + " seconds");
+		
+		
+//		//TEST
+//		ArrayList<Point> centroid2 = initCentroids(points, 15);
+//		float hashValue = 0;
+//		for(Point point:centroid2){
+//			hashValue = point.getHashValue();
+//		
+////				buckets.get(hashCode).addPoint(point);
+//				if(Float.hashCode(hashValue)>0){
+//					buckets.floorEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+//				}else{
+//					buckets.ceilingEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+//				}
+//				System.out.println("Centroids2 hashBucketCode: " + point.getBucketHashCode());
+//		}
+//		
+//		for(Point point:centroid2){
+//			for(Point point2:centroid2){
+//				if(!point.equals(point2)){
+//					if(point.getBucketHashCode() == point2.getBucketHashCode()){
+//						System.out.println("SAME BUCKET");
+//					}
+//				}
+//					
+//			}
+//		}
+//		
+		//TEST ENDE
 
 	    double estimatedTime = (System.nanoTime() - startTime)/ 1000000000.0;
 		System.out.println("\nElapsed Time: " + estimatedTime + " seconds");
 
 	}
 	
-	public ArrayList<Point> initCentroids(ArrayList<Point> points,int numOfCtr){
-		ArrayList<Point> pointArray = new ArrayList(points);
-		ArrayList<Point> centroids = new ArrayList();
-		Random r = new Random();
-		
-		Point firstCentroid = pointArray.get(r.nextInt(pointArray.size()));
-		centroids.add(firstCentroid);
-		pointArray.remove(firstCentroid);
-		
-		
-		double[] d2 = new double[pointArray.size()];
-		
-		while(centroids.size()<numOfCtr){
-			double sum = 0;
-			for(int i=0;i<centroids.size();++i){
-				Point p = pointArray.get(i);
-				int index = nearestCentroid(centroids, p);
-				double d = dist(p, centroids.get(index));
-				sum+=d*d;
-				d2[i]=sum;
-			}
-			
-			double d = r.nextDouble() * sum;
-			for(int i=0;i<d2.length;++i){
-				if(d2[i]>=d){
-					Point p = pointArray.get(i);
-					centroids.add(p);
-					pointArray.remove(p);
-					break;
-				}
-			}
-		}
-		
-		return centroids;
-		
-	}
-	
-	public int nearestCentroid(ArrayList<Point> centroids,Point p){
-		double minDistance = Double.MAX_VALUE;
-        int indexOfCentroid = 0;
-        
-        for (int i=0;i<centroids.size();++i){
-        	float distance = dist(p, centroids.get(i));
-        	if (distance < minDistance) {
-                minDistance = distance;
-                indexOfCentroid = i;
-            }
-        }
-        
-        return indexOfCentroid;
-	}
-	
-<<<<<<< HEAD
-=======
-	public ArrayList<Point> initCentroids(ArrayList<Point> points,int numOfCtr){
-		ArrayList<Point> pointArray = new ArrayList(points);
-		ArrayList<Point> centroids = new ArrayList();
-		Random r = new Random();
-		
-		Point firstCentroid = pointArray.get(r.nextInt(pointArray.size()));
-		centroids.add(firstCentroid);
-		pointArray.remove(firstCentroid);
-		
-		
-		double[] d2 = new double[pointArray.size()];
-		
-		while(centroids.size()<numOfCtr){
-			double sum = 0;
-			for(int i=0;i<centroids.size();++i){
-				Point p = pointArray.get(i);
-				int index = nearestCentroid(centroids, p);
-				double d = dist(p, centroids.get(index));
-				sum+=d*d;
-				d2[i]=sum;
-			}
-			
-			double d = r.nextDouble() * sum;
-			for(int i=0;i<d2.length;++i){
-				if(d2[i]>=d){
-					Point p = pointArray.get(i);
-					centroids.add(p);
-					pointArray.remove(p);
-					break;
-				}
-			}
-		}
-		
-		return centroids;
-		
-	}
-	
-	public int nearestCentroid(ArrayList<Point> centroids,Point p){
-		double minDistance = Double.MAX_VALUE;
-        int indexOfCentroid = 0;
-        
-        for (int i=0;i<centroids.size();++i){
-        	float distance = dist(p, centroids.get(i));
-        	if (distance < minDistance) {
-                minDistance = distance;
-                indexOfCentroid = i;
-            }
-        }
-        
-        return indexOfCentroid;
-	}
-	
-	
-	public static float dist(Point point1, Point point2){
-		float sum=0;
-		for(int i=0;i<point1.getCoordinates().size();i++){
-			sum+=Math.pow(point1.getCoordinates().get(i)-point2.getCoordinates().get(i), 2);
-		}
-		float norm=(float)Math.sqrt(sum);
-		return norm;
+	public static TreeMap<Object,Bucket> initBucketsAndHashPoints(ArrayList<Point> points,Point v, Float w) throws Exception{
+		//Current Bucketsize
+				TreeMap<Object, Bucket> buckets = new TreeMap<>();
+				float min = Float.MAX_VALUE;
+				float max = Float.MIN_VALUE;
+				float hashValue = 0;
+				//First hash and computing Bucketsize
 
-	    }
+				for(Point point: points){
+					hash(point, v);
+					if(point.getHashValue() >= max){
+						max = point.getHashValue();
+					}
+					if(point.getHashValue() <= min){
+						min = point.getHashValue();
+					}
+				}
+
+				//Set intervals of buckets
+				//TODO Optimize?
+				if(w==null){
+					w = (float)(Math.abs(max-min)/(Math.sqrt(points.size())/Math.log(points.size())));
+				}
+				System.out.println("Bucketsize: " + w);
+				System.out.println("MIN: " + min);
+				System.out.println("MAX: " + max);
+				int bucketNumbs = (int) Math.ceil(Math.sqrt(points.size())/Math.log(points.size()));
+				System.out.println("Bucketnumbers: " + bucketNumbs);
+				float interval = min;
+				for(int i=0;i<bucketNumbs;i++){
+					buckets.put(Float.hashCode(interval),new Bucket(new float[]{interval,(float) (interval+(w-0.0001))},Float.hashCode(interval)));
+//					System.out.println("IntevalHash: " + Float.hashCode(intervall));
+					interval+=w;
+				}
+				
+				//Set points to buckets
+				for(Point point:points){
+					hashValue = point.getHashValue();
+					if(hashValue < min || hashValue > max){
+						throw new Exception("Hashcode is not in range");
+					}else{
+//						buckets.get(hashCode).addPoint(point);
+						if(Float.hashCode(hashValue)>0){
+							buckets.floorEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+						}else{
+							buckets.ceilingEntry(Float.hashCode(hashValue)).getValue().addPoint(point);
+						}
+
+					}
+				}
+				return buckets;
+
+	}
 	
->>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
+	public static ArrayList<Point> initCentroids(ArrayList<Point> points,int numOfCtr){
+		ArrayList<Point> pointArray = new ArrayList(points);
+		ArrayList<Point> centroids = new ArrayList();
+		Random r = new Random();
+		
+		Point firstCentroid = pointArray.get(r.nextInt(pointArray.size()));
+		centroids.add(firstCentroid);
+		pointArray.remove(firstCentroid);
+		
+		
+		double[] d2 = new double[pointArray.size()];
+		
+		while(centroids.size()<numOfCtr){
+			double sum = 0;
+			for(int i=0;i<centroids.size();++i){
+				Point p = pointArray.get(i);
+				int index = nearestCentroid(centroids, p);
+				double d = dist(p, centroids.get(index));
+				sum+=d*d;
+				d2[i]=sum;
+			}
+			
+			double d = r.nextDouble() * sum;
+			for(int i=0;i<d2.length;++i){
+				if(d2[i]>=d){
+					Point p = pointArray.get(i);
+					centroids.add(p);
+					pointArray.remove(p);
+					break;
+				}
+			}
+		}
+		
+		return centroids;
+		
+	}
+	
+	public static int nearestCentroid(ArrayList<Point> centroids,Point p){
+		double minDistance = Double.MAX_VALUE;
+        int indexOfCentroid = 0;
+        
+        for (int i=0;i<centroids.size();++i){
+        	float distance = dist(p, centroids.get(i));
+        	if (distance < minDistance) {
+                minDistance = distance;
+                indexOfCentroid = i;
+            }
+        }
+        
+        return indexOfCentroid;
+	}
+	
+
 	
 	/**
 	 * Function to compare results from Martin Perdacher

@@ -20,57 +20,31 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args){
-<<<<<<< HEAD
 		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
 		try {
-			KMeans.lsh(points);
-			KMeans k = new KMeans();
+			KMeans.lsh(points,null);
 			
-			ArrayList a = k.initCentroids(points,6);
+			
+			KMeans k = new KMeans();
+			System.out.println(">>>>>>>>>>>>>>>>Centroid-Method 2<<<<<<<<<<<<<<<<<<");
+			long startTime = System.nanoTime();
+			ArrayList a = k.initCentroids(points,15);
+			double estimatedTime = (System.nanoTime() - startTime)/ 1000000000.0;
+			System.out.println("\nElapsed Time: " + estimatedTime + " seconds");
 			
 			for(int i=0;i<a.size();++i){
-				System.out.println(a.get(i));
+				System.out.println(a.get(i).toString());
 			}
-			
-			Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
-			scatterplotdemo4.pack();
-			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-			scatterplotdemo4.setVisible(true);
+//			
+//			Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
+//			scatterplotdemo4.pack();
+//			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
+//			scatterplotdemo4.setVisible(true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-=======
 
-		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/sipic/Desktop/SDM_csv/LSH-nmi-corrected.csv");
-		
-		KMeans k = new KMeans();
-		
-		ArrayList a = k.initCentroids(points,6);
-		
-		for(int i=0;i<a.size();++i){
-			System.out.println(a.get(i));
->>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 		}
-
-
-		
-<<<<<<< HEAD
-
-=======
-		
-		Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
-		scatterplotdemo4.pack();
-		RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-		scatterplotdemo4.setVisible(true);
-
-	
-		
-
-
-		
-		
-		
->>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 //		ArrayList<Float> point = new ArrayList<>();
 //		Random random = new Random();
 //		for(int i=0;i<50;i++){

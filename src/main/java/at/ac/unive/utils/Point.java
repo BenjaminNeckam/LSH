@@ -6,6 +6,7 @@ public class Point {
 	ArrayList<Float> coordinates;
 	int clusterNumb;
 	float hashValue;
+	int bucketHashCode;
 	
 	public Point() {}
 	
@@ -67,6 +68,16 @@ public class Point {
 
 	public void setHashValue(float hashValue) {
 		this.hashValue = hashValue;
+	}
+
+	
+	
+	public int getBucketHashCode() {
+		return bucketHashCode;
+	}
+
+	public void setBucketHashCode(int bucketHashCode) {
+		this.bucketHashCode = bucketHashCode;
 	}
 
 	@Override

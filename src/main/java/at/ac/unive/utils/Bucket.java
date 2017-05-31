@@ -16,9 +16,11 @@ public class Bucket {
 	public void addPoint(Point point){
 		if(this.points==null){
 			this.points = new ArrayList<Point>();
+			point.setBucketHashCode(bucketHashCode);
 			this.points.add(point);
 		}else{
 			this.points.add(point);
+			point.setBucketHashCode(bucketHashCode);
 		}
 	}
 
@@ -40,11 +42,6 @@ public class Bucket {
 	public void setBucketInterval(float[] bucketInterval) {
 		this.bucketInterval = bucketInterval;
 	}
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> 36f04505f59930e738ef8a5e8c183160ecb5394c
 
 	@Override
 	public String toString(){
