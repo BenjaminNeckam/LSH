@@ -5,14 +5,17 @@ import java.util.ArrayList;
 public class Bucket {
 	ArrayList<Point> points;
 	float[] bucketInterval;
-	
-	public Bucket(float[] bucketInterval){
+	int bucketHashCode;
+	int clusterNumb;
+
+	public Bucket(float[] bucketInterval, int bucketHashCode){
 		this.bucketInterval = bucketInterval;
+		this.bucketHashCode = bucketHashCode;
 	}
-	
+
 	public void addPoint(Point point){
 		if(this.points==null){
-			this.points = new ArrayList<>();
+			this.points = new ArrayList<Point>();
 			this.points.add(point);
 		}else{
 			this.points.add(point);
@@ -37,15 +40,35 @@ public class Bucket {
 	public void setBucketInterval(float[] bucketInterval) {
 		this.bucketInterval = bucketInterval;
 	}
-	
+
+
 	@Override
 	public String toString(){
 		if(points==null){
 			this.points = new ArrayList<>();
 		}
-		String string = "Intervall: [" + getBucketInterval()[0] + ";" + getBucketInterval()[1]  + "]" 
+		String string = "Intervall: [" + getBucketInterval()[0] + ";" + getBucketInterval()[1]  + "]"
 				+ "\nNumber Elements: " + getPoints().size();
 		return string;
 	}
+
+
+	public int getBucketHashCode() {
+		return bucketHashCode;
+	}
+
+	public void setBucketHashCode(int bucketHashCode) {
+		this.bucketHashCode = bucketHashCode;
+	}
+
+	public int getClusterNumb() {
+		return clusterNumb;
+	}
+
+	public void setClusterNumb(int clusterNumb) {
+		this.clusterNumb = clusterNumb;
+	}
+
+
 
 }

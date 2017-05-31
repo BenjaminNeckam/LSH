@@ -13,7 +13,7 @@ public class CSVParser {
 	 * @return
 	 */
 	public static ArrayList<Point> CSVToPoint(String file){
-		ArrayList<Point> points = new ArrayList<>();
+		ArrayList<Point> points = new ArrayList<Point>();
 		ArrayList<Float> coordinates;
 		String line="";
 		String splitter = ",";
