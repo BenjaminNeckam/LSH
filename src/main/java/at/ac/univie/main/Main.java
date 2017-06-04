@@ -20,11 +20,19 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args){
-		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
+		ArrayList<Point> points = CSVParser.CSVToPoint("C:\\Users\\sipic\\Desktop\\SDM_csv\\LSH-nmi-corrected.csv");
 		try {
-			KMeans.lsh(points,null);
+			KMeans k = new KMeans();
+			k.lloyd(points,6);
 			
+			Plot scatterplotdemo4 = new Plot("K-Means Start",points, 6);
+		scatterplotdemo4.pack();
+			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
+			scatterplotdemo4.setVisible(true);
 			
+			//KMeans.lsh(points,null);
+			
+		/*
 			KMeans k = new KMeans();
 			System.out.println(">>>>>>>>>>>>>>>>Centroid-Method 2<<<<<<<<<<<<<<<<<<");
 			long startTime = System.nanoTime();
@@ -39,7 +47,7 @@ public class Main {
 //			Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
 //			scatterplotdemo4.pack();
 //			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-//			scatterplotdemo4.setVisible(true);
+//			scatterplotdemo4.setVisible(true); */
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
