@@ -19,9 +19,12 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args) {
-		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-small.csv");
+		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
+		ArrayList<Integer> compare = CSVParser.CSVToPointCompare("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-compare.csv");
 		try {
-			KMeans.lsh(points, null);
+			KMeans.lsh(points, null, (float)7.0);
+			ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
+			System.out.println("NMI: " + KMeans.NMI(compare, result));
 
 			// KMeans k = new KMeans();
 			// System.out.println(">>>>>>>>>>>>>>>>Centroid-Method

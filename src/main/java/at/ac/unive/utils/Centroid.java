@@ -1,10 +1,13 @@
 package at.ac.unive.utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Centroid extends Point {
 	ArrayList<Bucket> buckets;
 	int bucketHashCode;
+	ArrayList<Point> remPoints;
+	ArrayList<Point> completePoints;
 
 	public ArrayList<Bucket> getBuckets() {
 		return buckets;
@@ -28,16 +31,42 @@ public class Centroid extends Point {
 		}
 		super.coordinates.clear();
 		ArrayList<Point> points = bucketToList(buckets);
+		if(remPoints!=null){
+			points.addAll(remPoints);
+		}
+		
 		float sum = 0;
 		for (int i = 0; i < points.get(0).getCoordinates().size(); i++) {
 			sum = 0;
 			for (int j = 0; j < points.size(); j++) {
 				sum += points.get(j).getCoordinates().get(i);
 			}
-			sum = sum / points.size();
+			sum = sum / (float)points.size();
 			super.coordinates.add(sum);
-
 		}
+		
+		completePoints = completePointList();
+	}
+	
+	public void addPoint(Point point) {
+		if(this.remPoints == null){
+			remPoints = new ArrayList<>();
+		}
+		if(!remPoints.contains(point)){
+			point.setClusterNumb(clusterNumb);
+			//point.setBucketHashCode1(bucketHashCode1);
+			remPoints.add(point);
+		}
+	}
+	
+	public void initUpdateCentroid(){
+		Random rand = new Random();
+		ArrayList<Point> points = bucketToList(buckets);
+		Point center = points.get(rand.nextInt(points.size()));
+		super.coordinates = new ArrayList<>();
+		super.coordinates.clear();
+		super.coordinates.add(center.getCoordinates().get(0));
+		super.coordinates.add(center.getCoordinates().get(1));
 	}
 
 	public ArrayList<Point> bucketToList(ArrayList<Bucket> buckets) {
@@ -46,6 +75,16 @@ public class Centroid extends Point {
 			points.addAll(b.getPoints());
 		}
 		return points;
+	}
+
+	
+	
+	public ArrayList<Point> getRemPoints() {
+		return remPoints;
+	}
+
+	public void setRemPoints(ArrayList<Point> remPoints) {
+		this.remPoints = remPoints;
 	}
 
 	public void addBucket(Bucket bucket) {
@@ -70,6 +109,28 @@ public class Centroid extends Point {
 	public void removeBucket(Bucket bucket) {
 		buckets.remove(bucket);
 	}
+	
+public ArrayList<Point> completePointList(){
+		ArrayList<Point> allPoints = new ArrayList<>();
+		if(remPoints!=null){
+			allPoints.addAll(remPoints);
+		}
+		if(buckets != null){
+			allPoints.addAll(bucketToList(buckets));
+		}
+		
+		return allPoints;
+	}
+
+
+
+	public ArrayList<Point> getCompletePoints() {
+	return completePoints;
+}
+
+public void setCompletePoints(ArrayList<Point> completePoints) {
+	this.completePoints = completePoints;
+}
 
 	@Override
 	public String toString() {

@@ -5,8 +5,10 @@ import java.util.ArrayList;
 public class Point {
 	ArrayList<Float> coordinates;
 	int clusterNumb;
-	float hashValue;
+	float hashValue1;
+	float hashValue2;
 	int bucketHashCode;
+	int compareClass;
 
 	public Point() {
 	}
@@ -22,6 +24,16 @@ public class Point {
 
 	public ArrayList<Float> getCoordinates() {
 		return coordinates;
+	}
+
+	
+	
+	public int getCompareClass() {
+		return compareClass;
+	}
+
+	public void setCompareClass(int compareClass) {
+		this.compareClass = compareClass;
 	}
 
 	public void setCoordinates(ArrayList<Float> coordinates) {
@@ -62,11 +74,20 @@ public class Point {
 	}
 
 	public float getHashValue() {
-		return hashValue;
+		return hashValue1;
 	}
 
 	public void setHashValue(float hashValue) {
-		this.hashValue = hashValue;
+		this.hashValue1 = hashValue;
+	}
+	
+
+	public float getHashValue2() {
+		return hashValue2;
+	}
+
+	public void setHashValue2(float hashValue2) {
+		this.hashValue2 = hashValue2;
 	}
 
 	public int getBucketHashCode() {

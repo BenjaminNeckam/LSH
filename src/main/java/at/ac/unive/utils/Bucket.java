@@ -7,13 +7,14 @@ public class Bucket {
 	float[] bucketInterval;
 	int bucketHashCode;
 	int clusterNumb;
-	Centroid centroid;
+	Centroid centroid = null;
 
 	public Bucket(float[] bucketInterval, int bucketHashCode) {
 		this.bucketInterval = bucketInterval;
 		this.bucketHashCode = bucketHashCode;
 	}
 
+	//TODO maybe set clusternumb here???
 	public void addPoint(Point point) {
 		if (this.points == null) {
 			this.points = new ArrayList<Point>();
@@ -49,8 +50,8 @@ public class Bucket {
 		if (points == null) {
 			this.points = new ArrayList<>();
 		}
-		String string = "Intervall: [" + getBucketInterval()[0] + ";" + getBucketInterval()[1] + "]"
-				+ "\nNumber Elements: " + getPoints().size();
+		String string = "\nIntervall: [" + getBucketInterval()[0] + ";" + getBucketInterval()[1] + "]"
+				+ "\nNumber Elements: " + getPoints().size() + "\nCentroid: " + getCentroid().getClusterNumb() + "\n";
 		return string;
 	}
 

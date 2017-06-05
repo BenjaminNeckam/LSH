@@ -14,6 +14,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -123,11 +124,18 @@ public class Plot extends ApplicationFrame {
 		}
 
 		for (Centroid point : centroids) {
-			ArrayList<Point> cPoints = point.bucketToList(point.getBuckets());
+			ArrayList<Point> cPoints = point.completePointList();
 			for (Point p : cPoints) {
 				series.get(p.getClusterNumb()).add(p.getCoordinates().get(0), p.getCoordinates().get(1));
 			}
-
+			//Centroids
+			XYDataItem cent = new XYDataItem(point.getCoordinates().get(0), point.getCoordinates().get(1));
+			String key = "C";
+			String con = Integer.toString(point.getClusterNumb());
+			key+=con;
+			XYSeries ser = new XYSeries(key);
+			ser.add(cent);
+			collection.addSeries(ser);
 		}
 
 		for (int i = 0; i < dimension; i++) {
