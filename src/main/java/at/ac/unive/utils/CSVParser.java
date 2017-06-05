@@ -32,4 +32,22 @@ public class CSVParser {
 		return points;
 	}
 
+	public static ArrayList<Integer> CSVToPointCompare(String file) {
+		ArrayList<Integer> points = new ArrayList<>();
+		float tmp;
+		Integer compareClass;
+		String line = "";
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			while ((line = br.readLine()) != null) {
+				tmp = Float.valueOf(line);
+				compareClass = Math.round(tmp);
+				points.add(compareClass);
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return points;
+	}
+
 }

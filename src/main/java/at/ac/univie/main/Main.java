@@ -20,12 +20,14 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args){
-		ArrayList<Point> points = CSVParser.CSVToPoint("C:\\Users\\sipic\\Desktop\\SDM_csv\\LSH-nmi-corrected.csv");
+		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
+		ArrayList<Integer> compare = CSVParser.CSVToPointCompare("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-compare.csv");
 		try {
-			KMeans k = new KMeans();
-			k.lloyd(points,6);
+			KMeans.lloyd(points,15);
+			ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
+			System.out.println("NMI: " + KMeans.NMI(compare, result));
 			
-			Plot scatterplotdemo4 = new Plot("K-Means Start",points, 6);
+			Plot scatterplotdemo4 = new Plot("K-Means Start",points, 15);
 		scatterplotdemo4.pack();
 			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
 			scatterplotdemo4.setVisible(true);

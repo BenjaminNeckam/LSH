@@ -431,11 +431,11 @@ public class KMeans {
 		ArrayList<Bucket> b = new ArrayList();
 		b = initBuckets(points, numbOfBuckets, 11);
 		for(int i=0;i<b.size();++i){
-			System.out.println(b.get(i).getPoints().size());
+//			System.out.println(b.get(i).getPoints().size());
 		}
 		
 		double estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-		System.out.println("\nElapsed Time Bucket creation: " + estimatedTimeV + " seconds");
+//		System.out.println("\nElapsed Time Bucket creation: " + estimatedTimeV + " seconds");
 		
 		
 		Point centroid = getCentroid(b.get(0).getPoints());
@@ -450,7 +450,7 @@ public class KMeans {
 				}
 				
 				estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-				System.out.println("\nElapsed Time maxDist calculation " + estimatedTimeV + " seconds");
+//				System.out.println("\nElapsed Time maxDist calculation " + estimatedTimeV + " seconds");
 				
 				
 				do{
@@ -467,27 +467,29 @@ public class KMeans {
 					centroid = getCentroid(b.get(counter).getPoints());
 					
 					estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-					System.out.println("\nElapsed Time do while " + estimatedTimeV + " seconds");
+//					System.out.println("\nElapsed Time do while " + estimatedTimeV + " seconds");
 			
 				}while(centroid.equals(centoridtmp));
 				
 				counter++;
-				System.out.println(counter);
+//				System.out.println(counter);
 			
 			}else{
-				do{
-					
-					centoridtmp = centroid;
-					centroid = getCentroid(b.get(counter).getPoints());
-					
+//				do{
+					for(int i=0; i<10; i++){
+						centoridtmp = centroid;
+						centroid = getCentroid(b.get(counter).getPoints());
+					}
+
 			
-				}while(centroid.equals(centoridtmp));
+//				}while(centroid.equals(centoridtmp));
 				counter++;
 			}
 		}
-		for(int i=0;i<b.size();++i){
-			System.out.println(b.get(i).getPoints().size());
-		}
+//		for(int i=0;i<b.size();++i){
+////			System.out.println(b.get(i).getPoints().size());
+//		}
+		System.out.println("\nElapsed Time Bucket creation: " + estimatedTimeV + " seconds");
 		
 	}
 	
@@ -516,6 +518,16 @@ public class KMeans {
 		}
 		
 		return pointsInBucket.get(index);
+	}
+
+	public static ArrayList<Integer> PointsToIntegerList(ArrayList<Point> points) {
+		ArrayList<Integer> list = new ArrayList<>();
+		Integer tmp;
+		for(Point p:points){
+			tmp = new Integer(p.getClusterNumb());
+			list.add(tmp);
+		}
+		return list;
 	}
 
 }
