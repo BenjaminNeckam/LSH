@@ -446,7 +446,8 @@ public class KMeans {
 		
 		for(int i = 0; i < keys.length; i++){
 			if(buckets.get(keys[i]).getCentroid() == null){
-				computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
+//				computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
+				Test(buckets.get(keys[i]), centroid);
 			}
 		}
 
@@ -489,4 +490,29 @@ public class KMeans {
 		}
 		return list;
 	}
+	
+	private static void Test(Bucket bucket, ArrayList<Centroid> centroid) {
+		ArrayList<Point> bucketPoints = bucket.getPoints();
+		float tmp = dist(bucketPoints.get(0), centroid.get(0));
+		float tmpDist = 0;
+		int size;
+		if (bucketPoints.size() < 1000) {
+			size = bucketPoints.size();
+		} else {
+			size = 1000;
+		}
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < centroid.size(); j++) {
+				tmpDist = dist(bucketPoints.get(i), centroid.get(j));
+				if (tmpDist < tmp) {
+					tmp = tmpDist;
+					bucket.setClusterNumb(centroid.get(j).getClusterNumb());
+					bucket.setCentroid(centroid.get(j));
+				}
+			}
+		}
+		centroid.get(bucket.getClusterNumb()).addBucket(bucket);
+	}
+
 }
