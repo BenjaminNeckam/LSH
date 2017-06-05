@@ -25,42 +25,20 @@ public class KMeans {
 
 	public static void lsh(ArrayList<Point> points, Float bucketSize, float minDist) throws Exception {
 		long startTime = System.nanoTime();
-		long startTimeV = System.nanoTime();
 		Point h1 = generateHashVector();
-		double estimatedTimeV = (System.nanoTime() - startTimeV) / 1000000000.0;
-		System.out.println("\nElapsed Time Generating HashVector: " + estimatedTimeV + " seconds");
-
-		long startTimeB = System.nanoTime();
-		// TODO more than one hash
 		TreeMap<Object, Bucket> buckets = initBucketsWithValues(points, h1, bucketSize);
-		double estimatedTimeB = (System.nanoTime() - startTimeB) / 1000000000.0;
-		System.out.println("\nElapsed Time Init Buckets and Hash Points: " + estimatedTimeB + " seconds");
-
-		long startTimeC = System.nanoTime();
 		ArrayList<Centroid> centroid = initCentroids(buckets, minDist);
-		System.out.println("Centroids!!!: " + centroid.size());
-		double estimatedTimeC = (System.nanoTime() - startTimeC) / 1000000000.0;
-		System.out.println("\nElapsed Time Init Centroids: " + estimatedTimeC + " seconds");
-		// for(Centroid c: centroid){
-		// System.out.println("New bucketsize in Cluster " + c.getClusterNumb()
-		// + ": " + c.getBuckets().size());
-		// }
-		// Loop for updating Centroid and collision check
-
 
 		for (int i = 0; i < 10; i++) {
-//			centroidUpdate(centroid, h1, buckets);
 			bucketUpdate(centroid);
 			for(Centroid c: centroid){
-				
 				c.updateCentroid();
 			}
 		}
 		plot(centroid);
 		
 		double estimatedTime = (System.nanoTime() - startTime) / 1000000000.0;
-		System.out.println("\nElapsed Time: " + estimatedTime + " seconds");
-		// System.out.println(buckets);
+		System.out.println("\nElapsed Time Method 2 (slower but more precisly): " + estimatedTime + " seconds");
 
 	}
 
@@ -75,7 +53,7 @@ public class KMeans {
 			throws Exception {
 		// Current Bucketsize
 		TreeMap<Object, Bucket> buckets = new TreeMap<>();
-
+		int bucketNumbs;
 		float hashValue = 0;
 		// First hash and computing Bucketsize
 
@@ -90,15 +68,13 @@ public class KMeans {
 		}
 
 		// Set intervals of buckets
-		// TODO Optimize?
 		if (w == null) {
 			w = (float) (Math.abs(max - min) / (Math.sqrt(points.size()) / Math.log(points.size())));
+			bucketNumbs = (int) Math.ceil(Math.sqrt(points.size()) / Math.log(points.size()));
+		}else{
+			bucketNumbs = (int) Math.ceil((Math.abs(max - min)/w)); 
 		}
-		System.out.println("Bucketsize: " + w);
-		System.out.println("MIN: " + min);
-		System.out.println("MAX: " + max);
-		int bucketNumbs = (int) Math.ceil(Math.sqrt(points.size()) / Math.log(points.size()));
-		System.out.println("Bucketnumbers: " + bucketNumbs);
+		 
 		float interval = min;
 		for (int i = 0; i < bucketNumbs; i++) {
 			buckets.put(Float.hashCode(interval),
@@ -106,7 +82,6 @@ public class KMeans {
 			// System.out.println("IntevalHash: " + Float.hashCode(intervall));
 			interval += w;
 		}
-		System.out.println("Min: " + buckets.firstKey().hashCode() + "Max: " + buckets.lastKey().hashCode());
 		// Set points to buckets
 		for (Point point : points) {
 			hashValue = point.getHashValue();
@@ -321,19 +296,12 @@ public class KMeans {
 		return norm;
 	}
 
-	// At the moment radical usage: compute similarity of a single or few random
-	// point to all center and assign all points of the bucket to the center
 	private static void computeDistAndAssignCenter(Bucket bucket, ArrayList<Centroid> centroid) {
 		ArrayList<Point> bucketPoints = bucket.getPoints();
 		float tmp;
 		float tmpDist = 0;
 		int size = bucket.getPoints().size();
-//		if (bucketPoints.size() < 1000) {
-//			size = bucketPoints.size();
-//		} else {
-//			size = 1000;
-//		}
-		//or intersection and check intersected points
+
 		int centroidIdx = 0;
 		for (int i = 0; i < size; i++) {
 			tmp = dist(bucketPoints.get(i), centroid.get(0));
@@ -455,8 +423,8 @@ public class KMeans {
 		
 		for(int i = 0; i < keys.length; i++){
 			if(buckets.get(keys[i]).getCentroid() == null){
-//				computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
-				Test(buckets.get(keys[i]), centroid);
+				computeDistAndAssignCenter(buckets.get(keys[i]), centroid);
+//				Test(buckets.get(keys[i]), centroid);
 			}
 		}
 
@@ -500,29 +468,6 @@ public class KMeans {
 		return list;
 	}
 	
-	private static void Test(Bucket bucket, ArrayList<Centroid> centroid) {
-		ArrayList<Point> bucketPoints = bucket.getPoints();
-		float tmp = dist(bucketPoints.get(0), centroid.get(0));
-		float tmpDist = 0;
-		int size;
-		if (bucketPoints.size() < 1000) {
-			size = bucketPoints.size();
-		} else {
-			size = 1000;
-		}
-
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < centroid.size(); j++) {
-				tmpDist = dist(bucketPoints.get(i), centroid.get(j));
-				if (tmpDist < tmp) {
-					tmp = tmpDist;
-					bucket.setClusterNumb(centroid.get(j).getClusterNumb());
-					bucket.setCentroid(centroid.get(j));
-				}
-			}
-		}
-		centroid.get(bucket.getClusterNumb()).addBucket(bucket);
-	}
 	
 	public static ArrayList<Bucket> initBuckets(ArrayList<Point> listOfPoints,int numOfBuckets, int w){
 		
@@ -570,17 +515,9 @@ public class KMeans {
 	
 	public static void lloyd(ArrayList points,int numbOfBuckets){
 		long startTime = System.nanoTime();
-		long startTimeV = System.nanoTime();
-		ArrayList<Bucket> b = new ArrayList();
+		ArrayList<Bucket> b = new ArrayList<>();
 		b = initBuckets(points, numbOfBuckets, 11);
-		for(int i=0;i<b.size();++i){
-//			System.out.println(b.get(i).getPoints().size());
-		}
-		
-		double estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-//		System.out.println("\nElapsed Time Bucket creation: " + estimatedTimeV + " seconds");
-		
-		
+	
 		Point centroid = getCentroid(b.get(0).getPoints());
 		Point centoridtmp = null;
 		int counter = 0;
@@ -591,11 +528,7 @@ public class KMeans {
 					float distance = dist(b.get(counter).getPoints().get(i), centroid);
 					if(distance > maxDist) maxDist = distance;
 				}
-				
-				estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-//				System.out.println("\nElapsed Time maxDist calculation " + estimatedTimeV + " seconds");
-				
-				
+
 				do{
 			
 					for(int i=0;i<b.get(counter+1).getPoints().size();++i){
@@ -609,30 +542,22 @@ public class KMeans {
 					centoridtmp = centroid;
 					centroid = getCentroid(b.get(counter).getPoints());
 					
-					estimatedTimeV = (System.nanoTime() - startTimeV)/ 1000000000.0;
-//					System.out.println("\nElapsed Time do while " + estimatedTimeV + " seconds");
 			
 				}while(centroid.equals(centoridtmp));
 				
 				counter++;
-//				System.out.println(counter);
 			
 			}else{
-//				do{
-					for(int i=0; i<10; i++){
+				do{	
 						centoridtmp = centroid;
 						centroid = getCentroid(b.get(counter).getPoints());
-					}
 
-			
-//				}while(centroid.equals(centoridtmp));
+				}while(centroid.equals(centoridtmp));
 				counter++;
 			}
 		}
-//		for(int i=0;i<b.size();++i){
-////			System.out.println(b.get(i).getPoints().size());
-//		}
-		System.out.println("\nElapsed Time Bucket creation: " + estimatedTimeV + " seconds");
+		double estimatedTime = (System.nanoTime() - startTime) / 1000000000.0;
+		System.out.println("\nElapsed Time Method 1 (faster but less precisly): " + estimatedTime + " seconds");
 		
 	}
 	

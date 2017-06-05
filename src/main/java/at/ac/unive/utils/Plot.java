@@ -128,14 +128,14 @@ public class Plot extends ApplicationFrame {
 			for (Point p : cPoints) {
 				series.get(p.getClusterNumb()).add(p.getCoordinates().get(0), p.getCoordinates().get(1));
 			}
-			//Centroids
-			XYDataItem cent = new XYDataItem(point.getCoordinates().get(0), point.getCoordinates().get(1));
-			String key = "C";
-			String con = Integer.toString(point.getClusterNumb());
-			key+=con;
-			XYSeries ser = new XYSeries(key);
-			ser.add(cent);
-			collection.addSeries(ser);
+//			//Centroids
+//			XYDataItem cent = new XYDataItem(point.getCoordinates().get(0), point.getCoordinates().get(1));
+//			String key = "C";
+//			String con = Integer.toString(point.getClusterNumb());
+//			key+=con;
+//			XYSeries ser = new XYSeries(key);
+//			ser.add(cent);
+//			collection.addSeries(ser);
 		}
 
 		for (int i = 0; i < dimension; i++) {

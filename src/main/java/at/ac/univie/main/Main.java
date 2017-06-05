@@ -1,16 +1,9 @@
 package at.ac.univie.main;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RefineryUtilities;
 
-import at.ac.unive.utils.Bucket;
 import at.ac.unive.utils.CSVParser;
 import at.ac.unive.utils.KMeans;
 import at.ac.unive.utils.Plot;
@@ -19,86 +12,65 @@ import at.ac.unive.utils.Point;
 public class Main {
 
 	public static void main(String[] args) {
-		ArrayList<Point> points = CSVParser.CSVToPoint("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-corrected.csv");
-		ArrayList<Integer> compare = CSVParser.CSVToPointCompare("C:/Users/Benni/git/LSH/src/test/resources/LSH-nmi-compare.csv");
-		try {
-			KMeans.lloyd(points,15);
-			ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
-			System.out.println("NMI: " + KMeans.NMI(compare, result));
-			
-			Plot scatterplotdemo4 = new Plot("K-Means Start",points, 15);
-		scatterplotdemo4.pack();
-			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-			scatterplotdemo4.setVisible(true);
-			
-			//KMeans.lsh(points,null);
-			
-		/*
-			KMeans k = new KMeans();
-			System.out.println(">>>>>>>>>>>>>>>>Centroid-Method 2<<<<<<<<<<<<<<<<<<");
-			long startTime = System.nanoTime();
-			ArrayList a = k.initCentroids(points,15);
-			double estimatedTime = (System.nanoTime() - startTime)/ 1000000000.0;
-			System.out.println("\nElapsed Time: " + estimatedTime + " seconds");
-			
-			for(int i=0;i<a.size();++i){
-				System.out.println(a.get(i).toString());
+		ArrayList<Point> points = CSVParser.CSVToPoint("LSH-nmi-corrected.csv");
+		ArrayList<Integer> compare = CSVParser.CSVToPointCompare("LSH-nmi-compare.csv");
+		
+		if(args[0].equals("1")){
+			try{
+				KMeans.lloyd(points,15);
+				ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
+				KMeans.NMI(compare, result);
+				
+				Plot scatterplotdemo4 = new Plot("K-Means Start",points, 15);
+				scatterplotdemo4.pack();
+				RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
+				scatterplotdemo4.setVisible(true);
+			}catch (Exception e) {
+				 System.err.println("An exception was thrown (most of the time for an unknow reason which we couldn't fix)");
+
 			}
-//			
-//			Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
-//			scatterplotdemo4.pack();
-//			RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-//			scatterplotdemo4.setVisible(true); */
-			KMeans.lsh(points, null, (float)7.0);
-//			ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
-			System.out.println("NMI: " + KMeans.NMI(compare, result));
+		}else if(args[0].equals("2")){
+			try{
+				Float bucketSize;
+				if(args[1].isEmpty()){
+					bucketSize = null;
+				}else{
+					bucketSize = Float.valueOf(args[1]);
+				}
+				KMeans.lsh(points, bucketSize, (float)7.0);
+				ArrayList<Integer> result2 = KMeans.PointsToIntegerList(points);
+				KMeans.NMI(compare, result2);
+			}catch (Exception e) {
+				 System.err.println("An exception was thrown (most of the time for an unknow reason which we couldn't fix)");
 
-			// KMeans k = new KMeans();
-			// System.out.println(">>>>>>>>>>>>>>>>Centroid-Method
-			// 2<<<<<<<<<<<<<<<<<<");
-			// long startTime = System.nanoTime();
-			// ArrayList a = k.initCentroids(points,15);
-			// double estimatedTime = (System.nanoTime() - startTime)/
-			// 1000000000.0;
-			// System.out.println("\nElapsed Time: " + estimatedTime + "
-			// seconds");
-			//
-			// for(int i=0;i<a.size();++i){
-			// System.out.println(a.get(i).toString());
-			// }
-			//
-			// Plot scatterplotdemo4 = new Plot("K-Means Start",a, 6);
-			// scatterplotdemo4.pack();
-			// RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
-			// scatterplotdemo4.setVisible(true);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			}
+			
+		}else if(args[0].equals("3")){
+			try{
+				Float bucketSize;
+				if(args[1].isEmpty()){
+					bucketSize = null;
+				}else{
+					bucketSize = Float.valueOf(args[1]);
+				}
+				KMeans.lloyd(points,15);
+				ArrayList<Integer> result = KMeans.PointsToIntegerList(points);
+				KMeans.NMI(compare, result);
+				
+				Plot scatterplotdemo4 = new Plot("K-Means Start",points, 15);
+				scatterplotdemo4.pack();
+				RefineryUtilities.centerFrameOnScreen(scatterplotdemo4);
+				scatterplotdemo4.setVisible(true);
+				
+				KMeans.lsh(points, bucketSize, (float)7.0);
+				ArrayList<Integer> result2 = KMeans.PointsToIntegerList(points);
+				KMeans.NMI(compare, result2);
+			}catch (Exception e) {
+				 System.err.println("An exception was thrown (most of the time for an unknow reason which we couldn't fix)");
 
+			}
 		}
-		// ArrayList<Float> point = new ArrayList<>();
-		// Random random = new Random();
-		// for(int i=0;i<50;i++){
-		// point.add((-100 + (0+100)*random.nextFloat()));
-		// }
-		// Collections.sort(point, new Comparator<Float>() {
-		// public int compare(Float o1, Float o2) {
-		// if (o1 > o2) {
-		// return -1;
-		// }
-		// if (o1 < o2) {
-		// return 1;
-		// }
-		// return 0;
-		// }
-		// });
-		//
-		// for(Float value:point){
-		// System.out.println(value);
-		// }
-		// for(Float value:point){
-		// System.out.println(Float.hashCode(value));
-		// }
-
+		
+		
 	}
 }
